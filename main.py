@@ -1,4 +1,9 @@
 # CODIGOS DE OPERACION
+import ROB
+import UnidadFuncional
+from EstacionReserva import EstacionReserva
+from Registro import Registro
+
 global cod_ADD
 global cod_SUB
 global cod_LW
@@ -50,4 +55,34 @@ rob_WB = 3
 
 
 if __name__ == '__main__':
-    print("Hello")
+
+    # DECLARACIÓN DE LAS VARIABLES QUE SIMULAN LA MEMORIA DE DATOS, DE INSTRUCCIONES Y BANCO DE REGISTROS
+
+    global banco_registros
+    global memoria_datos
+    global memoria_instrucciones
+    banco_registros = Registro[size_REG]
+    memoria_datos = [size_DAT]
+    memoria_instrucciones = [size_INS]
+
+    global UF
+    global ER
+    global Rob
+    UF = UnidadFuncional[TOTAL_UF]              #UF[0] --> ALU, UF[1] --> LW/SW, UF[2] --> MULT
+    ER = EstacionReserva[TOTAL_UF][size_INS]    #ER[0] --> ALU, ER[1] --> MEM, ER[2] --> MULT
+    Rob = ROB[size_INS]
+
+    global inst_prog            # total instrucciones programa
+    global inst_rob             # instrucciones en rob
+    inst_rob = 0
+
+    global p_rob_cola           # puntero a las posiciones de rob para introducir (cola)
+    global p_rob_cabeza         # o retirar instrucciones (cabeza)
+    p_rob_cola = 0
+
+    global PC                   # puntero a memoria de intrucciones, siguiente instruccion a IF
+    PC = 0
+
+    global p_er_cola[TOTAL_UF]  # vector de punteros que apuntan a la cola de cada una de las UF
+    p_er_cola = [0,0,0]
+
