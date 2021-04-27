@@ -39,7 +39,14 @@ ciclos_MEM = 2
 ciclos_ALU = 1
 ciclos_MULT = 5
 
+# ETAPAS DE PROCESAMIENTO DE LAS INSTRUCCIONES EN ROB
+global rob_ISS
+global rob_EX
+global rob_WB
 
+rob_ISS = 1
+rob_EX = 2
+rob_WB = 3
 
 
 if __name__ == '__main__':
