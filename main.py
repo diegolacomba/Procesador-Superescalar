@@ -61,16 +61,16 @@ if __name__ == '__main__':
     global banco_registros
     global memoria_datos
     global memoria_instrucciones
-    banco_registros = Registro[size_REG]
+    banco_registros = [size_REG]
     memoria_datos = [size_DAT]
     memoria_instrucciones = [size_INS]
 
     global UF
     global ER
     global Rob
-    UF = UnidadFuncional[TOTAL_UF]              #UF[0] --> ALU, UF[1] --> LW/SW, UF[2] --> MULT
-    ER = EstacionReserva[TOTAL_UF][size_INS]    #ER[0] --> ALU, ER[1] --> MEM, ER[2] --> MULT
-    Rob = ROB[size_INS]
+    UF = [TOTAL_UF]              #UF[0] --> ALU, UF[1] --> LW/SW, UF[2] --> MULT
+    ER = [TOTAL_UF][size_INS]    #ER[0] --> ALU, ER[1] --> MEM, ER[2] --> MULT
+    Rob = [size_INS]
 
     global inst_prog            # total instrucciones programa
     global inst_rob             # instrucciones en rob
@@ -83,6 +83,6 @@ if __name__ == '__main__':
     global PC                   # puntero a memoria de intrucciones, siguiente instruccion a IF
     PC = 0
 
-    global p_er_cola[TOTAL_UF]  # vector de punteros que apuntan a la cola de cada una de las UF
+    global p_er_cola  # vector de punteros que apuntan a la cola de cada una de las UF
     p_er_cola = [0,0,0]
 
