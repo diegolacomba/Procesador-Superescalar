@@ -7,3 +7,5 @@ class Instrucciones:
         self.inm = inm
 
 
+
+
