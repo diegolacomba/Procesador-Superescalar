@@ -1,4 +1,4 @@
-class Instrucciones:
+class Instruccion:
     def __init__(self, cod, rd, rs, rt, inm):
         self.cod = cod
         self.rd = rd
