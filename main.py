@@ -2,8 +2,9 @@
 import ROB
 import UnidadFuncional
 from EstacionReserva import EstacionReserva
+from Memoria import Memoria
 from Registro import Registro
-
+mem = Memoria()
 global cod_ADD
 global cod_SUB
 global cod_LW
@@ -54,6 +55,21 @@ rob_EX = 2
 rob_WB = 3
 
 
+def Etapa_commit():
+    print('Etapa commit')
+
+
+def Etapa_WB():
+    print('Etapa WB')
+
+
+def Etapa_EX():
+    print('Etapa EX')
+
+
+def Etapa_ID_ISS():
+    print('Etapa ID_ISS')
+
 if __name__ == '__main__':
 
     # DECLARACIÓN DE LAS VARIABLES QUE SIMULAN LA MEMORIA DE DATOS, DE INSTRUCCIONES Y BANCO DE REGISTROS
@@ -68,7 +84,7 @@ if __name__ == '__main__':
     global UF
     global ER
     global Rob
-    UF = [TOTAL_UF]              #UF[0] --> ALU, UF[1] --> LW/SW, UF[2] --> MULT
+    UF= [TOTAL_UF]              #UF[0] --> ALU, UF[1] --> LW/SW, UF[2] --> MULT
     ER = [TOTAL_UF][size_INS]    #ER[0] --> ALU, ER[1] --> MEM, ER[2] --> MULT
     Rob = [size_INS]
 
@@ -85,4 +101,33 @@ if __name__ == '__main__':
 
     global p_er_cola  # vector de punteros que apuntan a la cola de cada una de las UF
     p_er_cola = [0,0,0]
+
+    #TODO miralo diego, no se como inicializarlo
+    #iniciamos simulador
+    Memoria.cargar_datos() #leemos las instrucciones y las codificamos
+    instrucciones = Memoria.instrucciones
+    Cargar_programa(instrucciones,memoria_instrucciones)
+    Iniciar_ER(ER)
+    Iniciar_ROB(ROB)
+    Iniciar_Banco_registros(banco_registros)
+    Iniciar_memoria_datos(memoria_datos)
+
+    #Inicializar_ER() y ROB Registros y memoria
+
+    while((inst_rob > 0) or (inst_prog > 0)):
+            Etapa_commit()
+            Etapa_WB()
+            Etapa_EX()
+            Etapa_ID_ISS()
+            ciclo = ciclo +1
+            # imprimir las distintas estructuras
+            print('CICLO N: '+ciclo)
+            #print Mostrar ER
+            #print Mostrar ROB
+            #print Banco de registros
+
+
+
+
+
 

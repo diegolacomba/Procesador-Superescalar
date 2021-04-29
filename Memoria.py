@@ -1,6 +1,6 @@
 from Instruccion import Instruccion
 
-
+global instrucciones
 def decodificar(value):
     datos = value.split()
     cod = 0
@@ -31,14 +31,14 @@ class Memoria:
 
     def cargar_datos(fichero):
         archivo = open(fichero, "r")
-        lectura = []
+        instrucciones = []
         for count, value in enumerate(archivo.readlines()):
             list = decodificar(value)
-            lectura.append(Instruccion(list[0],list[1],list[2],list[3],list[4]))
+            instrucciones.append(Instruccion(list[0],list[1],list[2],list[3],list[4]))
 
         archivo.close()
-        for e in lectura:
-            print(e.toString())
+       # for e in instrucciones:
+         #   print(e.cod)
 
 
     if __name__ == '__main__':
