@@ -8,6 +8,19 @@ class Instruccion:
     def toString(self):
         print('cod: '+str(self.cod)+' rd: '+str(self.rd)+' rs: '+str(self.rs)+' rt: '+str(self.rs)+' inm: '+str(self.inm))
 
+    def getCod(self):
+        return self.cod
+
+    def getRd(self):
+        return self.rd
+
+    def getRs(self):
+        return self.rs
 
 
+    def getRt(self):
+        return self.rt
 
+
+    def getinm(self):
+        return self.inm

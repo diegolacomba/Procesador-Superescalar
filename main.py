@@ -54,7 +54,6 @@ rob_ISS = 1
 rob_EX = 2
 rob_WB = 3
 
-
 def Etapa_commit():
     print('Etapa commit')
 
@@ -70,6 +69,27 @@ def Etapa_EX():
 
 def Etapa_ID_ISS():
     print('Etapa ID_ISS')
+    inst = memoria_instrucciones[PC]
+
+    pos = inst.getCod()
+    puntero = 0
+    if (pos == 3 or pos == 4):
+        puntero = 1
+    if (pos == 5):
+        puntero = 2
+
+    opA = buscarRegistro(inst.getRd)
+    opB =buscarRegistro(inst.getRs)
+    if (opA.getOk == 1 and opB.getOk()== 1):
+        ER[puntero][p_er_cola[puntero]] = EstacionReserva(1,-1,pos,inst.getRd,opA.getOk(),opA.getClk_tick_ok(),inst.getRd,opB.getOk(),opB.getClk_tick_ok(),inst.getInm)
+        p_er_cola[puntero] = p_er_cola[puntero]+1
+    else:
+
+
+def buscarRegistro(self, reg):
+    num = int(reg[:-1])
+    return banco_registros[num]
+
 
 if __name__ == '__main__':
 
@@ -112,7 +132,7 @@ if __name__ == '__main__':
     # Inicializamos ER [3][32]
     for i in range(TOTAL_UF):
         for j in range(32):
-            ER[i][j] = EstacionReserva()
+            ER[i][j] = None
 
     # Inicializamos ROB
     for i in range(32):
@@ -120,7 +140,7 @@ if __name__ == '__main__':
 
     # Ini Banco Registros
     for i in range(16):
-        banco_registros[i] = Registro()
+        banco_registros[i] = Registro(0,1,1,-1)
 
     # Ini Mem. Datos
     for i in range(32):

@@ -4,3 +4,11 @@ class Registro:
         self.ok = ok
         self.clk_tick_ok = clk_tick_ok
         self.TAG_ROB = TAG_ROB
+    def getContenido(self):
+        return self.contenido
+    def getOk(self):
+        return self.ok
+    def getClk_tick_ok(self):
+        return self.clk_tick_ok
+    def getTag_ROB(self):
+        return self.TAG_ROB
