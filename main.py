@@ -1,10 +1,10 @@
 # CODIGOS DE OPERACION
+import Memoria
 import ROB
 import UnidadFuncional
 from EstacionReserva import EstacionReserva
-from Memoria import Memoria
 from Registro import Registro
-mem = Memoria()
+
 global cod_ADD
 global cod_SUB
 global cod_LW
@@ -59,6 +59,7 @@ def Etapa_commit():
     print('Etapa commit')
 
 
+
 def Etapa_WB():
     print('Etapa WB')
 
@@ -84,11 +85,12 @@ if __name__ == '__main__':
     global UF
     global ER
     global Rob
-    UF= [TOTAL_UF]              #UF[0] --> ALU, UF[1] --> LW/SW, UF[2] --> MULT
+    UF = [TOTAL_UF]              #UF[0] --> ALU, UF[1] --> LW/SW, UF[2] --> MULT
     ER = [TOTAL_UF][size_INS]    #ER[0] --> ALU, ER[1] --> MEM, ER[2] --> MULT
     Rob = [size_INS]
 
-    global inst_prog            # total instrucciones programa
+    global inst_prog           # total instrucciones programa
+    inst_prog = Memoria.cargar_datos("instrucciones.txt")
     global inst_rob             # instrucciones en rob
     inst_rob = 0
 
@@ -104,15 +106,28 @@ if __name__ == '__main__':
 
     #TODO miralo diego, no se como inicializarlo
     #iniciamos simulador
-    Memoria.cargar_datos() #leemos las instrucciones y las codificamos
-    instrucciones = Memoria.instrucciones
-    Cargar_programa(instrucciones,memoria_instrucciones)
-    Iniciar_ER(ER)
-    Iniciar_ROB(ROB)
-    Iniciar_Banco_registros(banco_registros)
-    Iniciar_memoria_datos(memoria_datos)
+    #leemos las instrucciones y las codificamos
+    memoria_instrucciones = Memoria.instrucciones
 
-    #Inicializar_ER() y ROB Registros y memoria
+    # Inicializamos ER [3][32]
+    for i in range(TOTAL_UF):
+        for j in range(32):
+            ER[i][j] = EstacionReserva()
+
+    # Inicializamos ROB
+    for i in range(32):
+         Rob[i] = ROB()
+
+    # Ini Banco Registros
+    for i in range(16):
+        banco_registros[i] = Registro()
+
+    # Ini Mem. Datos
+    for i in range(32):
+        memoria_datos[i] = i
+
+    global ciclo
+    ciclo = 1
 
     while((inst_rob > 0) or (inst_prog > 0)):
             Etapa_commit()
@@ -125,9 +140,3 @@ if __name__ == '__main__':
             #print Mostrar ER
             #print Mostrar ROB
             #print Banco de registros
-
-
-
-
-
-

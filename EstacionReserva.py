@@ -11,3 +11,4 @@ class EstacionReserva:
         self.clk_tick_ok_b = clk_tick_ok_b
         self.inmediato = inmediato
 
+        

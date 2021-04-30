@@ -1,6 +1,7 @@
 from Instruccion import Instruccion
 
 global instrucciones
+
 def decodificar(value):
     datos = value.split()
     cod = 0
@@ -27,19 +28,18 @@ def decodificar(value):
     else:
         cod = 5
     return [cod, rd, rs, rt, inm]
+
+
+def cargar_datos(fichero):
+    archivo = open(fichero, "r")
+    instrucciones = []
+    for count, value in enumerate(archivo.readlines()):
+        list = decodificar(value)
+        instrucciones.append(Instruccion(list[0],list[1],list[2],list[3],list[4]))
+
+    archivo.close()
+    return len(instrucciones)
+
 class Memoria:
-
-    def cargar_datos(fichero):
-        archivo = open(fichero, "r")
-        instrucciones = []
-        for count, value in enumerate(archivo.readlines()):
-            list = decodificar(value)
-            instrucciones.append(Instruccion(list[0],list[1],list[2],list[3],list[4]))
-
-        archivo.close()
-       # for e in instrucciones:
-         #   print(e.cod)
-
-
     if __name__ == '__main__':
         cargar_datos('instrucciones.txt')
