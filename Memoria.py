@@ -32,7 +32,6 @@ def decodificar(value):
 
 def cargar_datos(fichero):
     archivo = open(fichero, "r")
-    instrucciones = []
     for count, value in enumerate(archivo.readlines()):
         list = decodificar(value)
         instrucciones.append(Instruccion(list[0],list[1],list[2],list[3],list[4]))

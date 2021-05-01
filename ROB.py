@@ -7,3 +7,4 @@ class ROB:
         self.valor_ok = valor_ok
         self.clk_tick_ok = clk_tick_ok
         self.etapa = etapa
+

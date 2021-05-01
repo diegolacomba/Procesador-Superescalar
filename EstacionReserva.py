@@ -5,7 +5,7 @@ class EstacionReserva:
         self.operacion = operacion
         self.opa = opa
         self.opa_ok = opa_ok
-        self.slk_tick_ok_a = clk_tick_ok_a
+        self.clk_tick_ok_a = clk_tick_ok_a
         self.opb = opb
         self.opb_ok = opb_ok
         self.clk_tick_ok_b = clk_tick_ok_b
