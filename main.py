@@ -1,44 +1,47 @@
 # CODIGOS DE OPERACION
-import Memoria
-import ROB
-import UnidadFuncional
+from Memoria import Memoria
+from UnidadFuncional import UnidadFuncional
 from EstacionReserva import EstacionReserva
 from Registro import Registro
+from ROB import ROB
+from Instruccion import Instruccion
+
 # DECLARACIÓN DE LAS VARIABLES QUE SIMULAN LA MEMORIA DE DATOS, DE INSTRUCCIONES Y BANCO DE REGISTROS
 
-global banco_registros
-global memoria_datos
-global memoria_instrucciones
-banco_registros = [size_REG]
-memoria_datos = [size_DAT]
-memoria_instrucciones = [size_INS]
+size_REG = 16
+size_DAT = 32
+size_INS = 32
 
-global UF
-global ER
-global Rob
-UF = [TOTAL_UF]              #UF[0] --> ALU, UF[1] --> LW/SW, UF[2] --> MULT
-ER = [TOTAL_UF][size_INS]    #ER[0] --> ALU, ER[1] --> MEM, ER[2] --> MULT
-Rob = [size_INS]
+banco_registros = []
+memoria_datos = []
+memoria_instrucciones = []
 
-global inst_prog           # total instrucciones programa
+# CODIGOS UNIDADES FUNCIONALES
+
+TOTAL_UF = 3
+ALU = 0
+MEM = 1
+MULT = 2
+
+
+UF = [[],[],[]]              #UF[0] --> ALU, UF[1] --> LW/SW, UF[2] --> MULT
+ER = [[],[],[]]            #ER[0] --> ALU, ER[1] --> MEM, ER[2] --> MULT
+Rob = []
+
+# total instrucciones programa
 inst_prog = Memoria.cargar_datos("instrucciones.txt")
-global  inst_rob             # instrucciones en rob
+# instrucciones en rob
 inst_rob = 0
 
-global p_rob_cola           # puntero a las posiciones de rob para introducir (cola)
-global p_rob_cabeza         # o retirar instrucciones (cabeza)
+# puntero a las posiciones de rob para introducir (cola)
+#global p_rob_cabeza         # o retirar instrucciones (cabeza)
 p_rob_cola = 0
 p_rob_cabeza = 0
-global PC                   # puntero a memoria de intrucciones, siguiente instruccion a IF
+# puntero a memoria de intrucciones, siguiente instruccion a IF
 PC = 0
 
-global p_er_cola  # vector de punteros que apuntan a la cola de cada una de las UF
+# vector de punteros que apuntan a la cola de cada una de las UF
 p_er_cola = [0,0,0]
-global cod_ADD
-global cod_SUB
-global cod_LW
-global cod_SW
-global cod_MULT
 
 cod_ADD = 1
 cod_SUB = 2
@@ -46,38 +49,14 @@ cod_LW = 3
 cod_SW = 4
 cod_MULT = 5
 
-global size_REG # NUMERO REGISTROS
-global size_DAT # TAMAÑO MEMORIA DATOS
-global size_INS # TAMAÑO MEMORIA INSTRUCCIONES
-
-size_REG = 16
-size_DAT = 32
-size_INS = 32
-
-# CODIGOS UNIDADES FUNCIONALES
-global TOTAL_UF
-global ALU
-global MEM
-global MULT
-
-TOTAL_UF = 3
-ALU = 0
-MEM = 1
-MULT = 2
 
 # CICLOS DE EJECUCION POR TIPO DE INSTRUCCION
-global ciclos_MEM
-global ciclos_ALU
-global ciclos_MULT
 
 ciclos_MEM = 2
 ciclos_ALU = 1
 ciclos_MULT = 5
 
 # ETAPAS DE PROCESAMIENTO DE LAS INSTRUCCIONES EN ROB
-global rob_ISS
-global rob_EX
-global rob_WB
 
 rob_ISS = 1
 rob_EX = 2
@@ -85,6 +64,11 @@ rob_WB = 3
 
 def Etapa_commit():
     print('Etapa commit')
+    global p_rob_cabeza
+    global inst_rob
+    global Rob
+    global banco_registros
+
     if((Rob[p_rob_cabeza].linea_valida == -1) and (Rob[p_rob_cabeza].etapa == 3)):
         if(Rob[p_rob_cabeza].destino != -1):
             registro_Id = Rob[p_rob_cabeza].destino
@@ -103,6 +87,13 @@ def Etapa_WB():
     print('Etapa WB')
     indice = 0
     siguiente = True
+    global UF
+    global ciclo
+    global Rob
+    global memoria_datos
+    global TOTAL_UF
+    global p_er_cola
+    global ER
 
     while(siguiente and  indice < TOTAL_UF):
         if (UF[indice].uso == 1 and UF[indice].res_ok == 1 and UF[indice].clk_tick_ok <= ciclo):
@@ -135,23 +126,36 @@ def Etapa_WB():
 
             UF[indice] = UnidadFuncional(0,0,0,0,0,0,0,0,0)
         else:
-            indice = indice +1
+            indice = indice + 1
 
 
 def Etapa_EX():
     print('Etapa EX')
     indice = 0
     ejecutando = False
+    global TOTAL_UF
+    global ciclos_ALU
+    global ciclos_MULT
+    global ciclos_MEM
+    global ciclo
+    global UF
+    global ER
+    global Rob
+    global p_er_cola
+
+
 
     while indice < TOTAL_UF:
         aux = UF[ciclo]
         maximo = 0
+
         if ciclo == 0:
             maximo = ciclos_ALU
         elif ciclo == 1:
             maximo = ciclos_MEM
         else:
             maximo = ciclos_MULT
+
         if aux.uso == 1:
             if aux.cont_ciclos < maximo:
                 aux.cont_ciclos = aux.cont_ciclos + 1
@@ -198,18 +202,32 @@ def Etapa_EX():
                                 UF[indice] = UnidadFuncional(1,0,aux_er.TAG_ROB,aux_er.opa,aux_er.inmediato,aux_er.operacion,0,0,ciclo)
                             Rob[aux_er[j].TAG_ROB].etapa = 2
                             ejecutando = True
-                            indice = indice -1
-                j = j +1
+
+                j = j + 1
+        indice = indice + 1
 
 def Etapa_ID_ISS():
     print('Etapa ID_ISS')
+    global inst_prog
+    global memoria_instrucciones
+    global ciclos_ALU
+    global ciclos_MULT
+    global ciclos_MEM
+    global p_er_cola
+    global p_rob_cola
+    global p_rob_cabeza
+    global Rob
+    global ER
+    global rob_ISS
+    global banco_registros
+
     if (inst_prog > 0):
 
         # Leemos instruccion directamente de la memoria
         inst = memoria_instrucciones[PC]
-
+        print (inst.toString())
         #Creamos su linea en la ER
-        linea_aux = EstacionReserva()
+        linea_aux = EstacionReserva(0,0,0,0,0,0,0,0,0,0)
 
         # Obtenemos el código para determinar la ER correspondiente
         cod_ins = inst.getCod()
@@ -229,7 +247,7 @@ def Etapa_ID_ISS():
         linea_aux.linea_valida = 1
         linea_aux.operacion = cod_ins
         #Buscar operando A
-        opA = buscarRegistro(inst.getRs)
+        opA = buscarRegistro(inst.rs)
         if ( opA.getOk() == 1 ):                # Si está disponible
             linea_aux.opa = opA.contenido       # cargar op en opA
             linea_aux.opa_ok = 1                 # y validar en opA_ok y clk_tick_ok_a
@@ -239,7 +257,9 @@ def Etapa_ID_ISS():
             linea_aux.opa_ok = 0
             linea_aux.clk_tick_ok_a = Rob[opA.TAG_ROB].clk_tick_ok
         #Buscar operando B
-        opB = buscarRegistro(inst.getRt)
+        print ('b')
+        print (inst.getRt)
+        opB = buscarRegistro(inst.getRt())
         if (opB.getOk() == 1):  # Si está disponible
             linea_aux.opb = opB.contenido  # cargar op en opB
             linea_aux.opb_ok = 1  # y validar en opB_ok y clk_tick_ok_b
@@ -256,22 +276,30 @@ def Etapa_ID_ISS():
         p_er_cola[cod_uf] += 1
 
         # Introducir instrucción en ROB y actualizar campos
-        linea_rob = ROB(p_rob_cola, 0, inst.getRd, 0, 0, ciclos_ex, rob_ISS)
+        linea_rob = ROB(p_rob_cola, 0, inst.getRd(), 0, 0, ciclos_ex, rob_ISS)
         if (cod_ins == 4):
             linea_rob.destino = 0
         Rob[p_rob_cola] = linea_rob
 
         #Actualizamos banco de registros
-        regD = banco_registros[inst.getRd]
+        posR= buscarRegistro(inst.getRd()) #TODO Revisar
+        regD = banco_registros[posR]
         regD.ok = 0
         regD.TAG_ROB = p_rob_cola
         p_rob_cola += 1
         inst_prog -= 1
 
 
-def buscarRegistro(self, reg):
-    num = int(reg[:-1])
-    return banco_registros[num]
+def buscarRegistro(reg):
+    a = str(reg)
+    print (len(a))
+    if(len(a)>2):
+        num = (a[:-1])
+        print ('l')
+
+        print (num)
+        return banco_registros[num]
+    return Registro(0,0,0,0)
 
 
 if __name__ == '__main__':
@@ -283,24 +311,26 @@ if __name__ == '__main__':
     #leemos las instrucciones y las codificamos
     memoria_instrucciones = Memoria.instrucciones
 
-    # Inicializamos ER [3][32]
+    # Inicializamos ER [3][32] y UF
     for i in range(TOTAL_UF):
+        UF[i] = UnidadFuncional(0,0,0,0,0,0,0,0,0)
         for j in range(32):
-            ER[i][j] = None
+            ER[i].append(EstacionReserva(0,0,0,0,0,0,0,0,0,0))
 
     # Inicializamos ROB
+
     for i in range(32):
-         Rob[i] = ROB()
+        a = ROB(0,0,0,0,0,0,0)
+        Rob.append(a)
 
     # Ini Banco Registros
     for i in range(16):
-        banco_registros[i] = Registro(0,1,1,-1)
+        banco_registros.append(Registro(0,1,1,-1))
 
     # Ini Mem. Datos
     for i in range(32):
-        memoria_datos[i] = i
+        memoria_datos.append(i)
 
-    global ciclo
     ciclo = 1
 
     while((inst_rob > 0) or (inst_prog > 0)):

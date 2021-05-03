@@ -17,10 +17,8 @@ class Instruccion:
     def getRs(self):
         return self.rs
 
-
     def getRt(self):
         return self.rt
-
 
     def getinm(self):
         return self.inm
