@@ -8,3 +8,8 @@ class ROB:
         self.clk_tick_ok = clk_tick_ok
         self.etapa = etapa
 
+    def toString(self):
+        return ('TAG_ROB: ' + str(self.TAG_ROB) + ' linea_valida: ' + str(self.linea_valida) + ' destino: ' + str(self.destino) + ' valor: ' + str(
+            self.valor) + ' valor_ok: ' + str(self.valor_ok)+ ' clk_tick_ok: '+str(self.clk_tick_ok)+' etapa: '+str(self.etapa))
+
+

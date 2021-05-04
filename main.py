@@ -111,7 +111,7 @@ def Etapa_WB():
             Rob[identificador].etapa = 3 # WB
             siguiente = False
 
-            for i in (TOTAL_UF):
+            for i in (range(TOTAL_UF)):
                 fin = p_er_cola[i]
                 for j in range(fin):
                     if ER[i][j].linea_valida == 1:
@@ -146,12 +146,12 @@ def Etapa_EX():
 
 
     while indice < TOTAL_UF:
-        aux = UF[ciclo]
+        aux = UF[indice]
         maximo = 0
 
-        if ciclo == 0:
+        if indice == 0:
             maximo = ciclos_ALU
-        elif ciclo == 1:
+        elif indice == 1:
             maximo = ciclos_MEM
         else:
             maximo = ciclos_MULT
@@ -220,12 +220,12 @@ def Etapa_ID_ISS():
     global ER
     global rob_ISS
     global banco_registros
-
+    global PC
     if (inst_prog > 0):
 
         # Leemos instruccion directamente de la memoria
         inst = memoria_instrucciones[PC]
-        print (inst.toString())
+        PC = PC +1
         #Creamos su linea en la ER
         linea_aux = EstacionReserva(0,0,0,0,0,0,0,0,0,0)
 
@@ -233,20 +233,23 @@ def Etapa_ID_ISS():
         cod_ins = inst.getCod()
         cod_uf = 0
         ciclos_ex = ciclos_ALU
-        if (cod_ins == 3 or cod_ins == 4):
+
+        if (cod_ins == 3 or cod_ins == 4): #carga almacenamiento
             cod_uf = 1
             ciclos_ex = ciclos_MEM
-        if (cod_ins == 5):
+        if (cod_ins == 5): #mult
             cod_uf = 2
             ciclos_ex = ciclos_MULT
-
         # Puntero de la ER
+
         puntero_er = p_er_cola[cod_uf]
+
 
         #Actualizar linea
         linea_aux.linea_valida = 1
         linea_aux.operacion = cod_ins
         #Buscar operando A
+
         opA = buscarRegistro(inst.rs)
         if ( opA.getOk() == 1 ):                # Si está disponible
             linea_aux.opa = opA.contenido       # cargar op en opA
@@ -257,8 +260,7 @@ def Etapa_ID_ISS():
             linea_aux.opa_ok = 0
             linea_aux.clk_tick_ok_a = Rob[opA.TAG_ROB].clk_tick_ok
         #Buscar operando B
-        print ('b')
-        print (inst.getRt)
+
         opB = buscarRegistro(inst.getRt())
         if (opB.getOk() == 1):  # Si está disponible
             linea_aux.opb = opB.contenido  # cargar op en opB
@@ -282,8 +284,8 @@ def Etapa_ID_ISS():
         Rob[p_rob_cola] = linea_rob
 
         #Actualizamos banco de registros
-        posR= buscarRegistro(inst.getRd()) #TODO Revisar
-        regD = banco_registros[posR]
+        regD= buscarRegistro(inst.getRd()) #TODO Revisar
+       # regD = banco_registros[posR]
         regD.ok = 0
         regD.TAG_ROB = p_rob_cola
         p_rob_cola += 1
@@ -292,10 +294,8 @@ def Etapa_ID_ISS():
 
 def buscarRegistro(reg):
     a = str(reg)
-    print (len(a))
     if(len(a)>2):
         num = (a[:-1])
-        print ('l')
 
         print (num)
         return banco_registros[num]
@@ -310,7 +310,10 @@ if __name__ == '__main__':
     #iniciamos simulador
     #leemos las instrucciones y las codificamos
     memoria_instrucciones = Memoria.instrucciones
-
+    print ('\nInstrucciones')
+    for i in memoria_instrucciones:
+        print (i.toString())
+    print ('\n')
     # Inicializamos ER [3][32] y UF
     for i in range(TOTAL_UF):
         UF[i] = UnidadFuncional(0,0,0,0,0,0,0,0,0)
@@ -325,11 +328,11 @@ if __name__ == '__main__':
 
     # Ini Banco Registros
     for i in range(16):
-        banco_registros.append(Registro(0,1,1,-1))
+        banco_registros.append(Registro(i,1,1,-1))
 
     # Ini Mem. Datos
     for i in range(32):
-        memoria_datos.append(i)
+        memoria_datos.append(i*2)
 
     ciclo = 1
 
@@ -340,20 +343,31 @@ if __name__ == '__main__':
             Etapa_ID_ISS()
             ciclo = ciclo +1
             # imprimir las distintas estructuras
-            print('CICLO N: '+ciclo)
+            print('\nCICLO N: '+str(ciclo))
             #print Mostrar ER
-            print('ER')
+            print('\nER')
             for i in range(len(ER)):
                 for j in range(len(ER[0])):
-                    print('i'+str(i)+' j'+str(j)+': '+str(ER[i][j]))
+                    print('[i'+str(i)+' j'+str(j)+'] : '+str(ER[i][j].toString()))
 
 
             #print Mostrar ROB
-            print('ROB')
-            for i in range(len(ROB)):
-                print(ROB[i])
+            print('\nROB')
+            for i in range(len(Rob)):
+                print(Rob[i].toString())
 
             #print Banco de registros
-            print('Registros')
+            print('\nRegistros')
             for i in range(len(banco_registros)):
-                print(banco_registros[i])
+                print(banco_registros[i].toString())
+
+            print('\nUnidad Funcional')
+            for i in range(len(UF)):
+                print(UF[i].toString())
+
+            print('\nMemoria de datos')
+            for i in range(32):
+                print ('Memoria: '+str(i)+' -> '+str(memoria_datos[i]))
+
+            print('\n-----------------CICLO N: '+str(ciclo)+'-----------------')
+

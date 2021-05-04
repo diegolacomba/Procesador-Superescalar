@@ -6,7 +6,7 @@ class Instruccion:
         self.rt = rt
         self.inm = inm
     def toString(self):
-        print('cod: '+str(self.cod)+' rd: '+str(self.rd)+' rs: '+str(self.rs)+' rt: '+str(self.rs)+' inm: '+str(self.inm))
+        return ('cod: '+str(self.cod)+' rd: '+str(self.rd)+' rs: '+str(self.rs)+' rt: '+str(self.rt)+' inm: '+str(self.inm))
 
     def getCod(self):
         return self.cod
