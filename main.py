@@ -68,11 +68,18 @@ def Etapa_commit():
     global inst_rob
     global Rob
     global banco_registros
+    print ('----------------------------------(Rob[p_rob_cabeza].etapa----------'+str(Rob[p_rob_cabeza].etapa))
+    if((Rob[p_rob_cabeza].linea_valida == 1) and (Rob[p_rob_cabeza].etapa == 3)):
+        print ('444444444444444444__________________________________________________________Contenido: ')
 
-    if((Rob[p_rob_cabeza].linea_valida == -1) and (Rob[p_rob_cabeza].etapa == 3)):
         if(Rob[p_rob_cabeza].destino != -1):
             registro_Id = Rob[p_rob_cabeza].destino
+            print ('__________________________________________________________________Contenido: ')
+
             if((Rob[p_rob_cabeza].TAG_ROB) == (banco_registros[registro_Id].TAG_ROB)):
+                print ('*************************************************************+Contenido: ')
+
+                print (Rob[p_rob_cabeza].valor)
                 banco_registros[registro_Id].contenido = Rob[p_rob_cabeza].valor
                 banco_registros[registro_Id].ok = 1
                 banco_registros[registro_Id].clk_tick_ok = banco_registros[registro_Id].clk_tick_ok +1
@@ -96,6 +103,7 @@ def Etapa_WB():
     global ER
 
     while(siguiente and  indice < TOTAL_UF):
+        print (UF[indice].toString())
         if (UF[indice].uso == 1 and UF[indice].res_ok == 1 and UF[indice].clk_tick_ok <= ciclo):
             res = UF[indice].res
             if (UF[indice].operacion == 3): #LW
@@ -107,7 +115,7 @@ def Etapa_WB():
             Rob[UF[indice].TAG_ROB].linea_valida = 1
             Rob[UF[indice].TAG_ROB].clk_tick_ok = 1
             identificador = UF[indice].TAG_ROB
-
+            print ('modificamos ROB___________')
             Rob[identificador].etapa = 3 # WB
             siguiente = False
 
@@ -301,6 +309,33 @@ def buscarRegistro(reg):
         return banco_registros[num]
     return Registro(0,0,0,0)
 
+def imprimir():
+    print('\nCICLO N: ' + str(ciclo))
+    # print Mostrar ER
+    print('\nER')
+    for i in range(len(ER)):
+        for j in range(len(ER[0])):
+            print('[i' + str(i) + ' j' + str(j) + '] : ' + str(ER[i][j].toString()))
+
+    # print Mostrar ROB
+    print('\nROB')
+    for i in range(len(Rob)):
+        print(Rob[i].toString())
+
+    # print Banco de registros
+    print('\nRegistros')
+    for i in range(len(banco_registros)):
+        print(banco_registros[i].toString())
+
+    print('\nUnidad Funcional')
+    for i in range(len(UF)):
+        print(UF[i].toString())
+
+    print('\nMemoria de datos')
+    for i in range(32):
+        print ('Memoria: ' + str(i) + ' -> ' + str(memoria_datos[i]))
+
+    print('\n-----------------CICLO N: ' + str(ciclo) + '-----------------')
 
 if __name__ == '__main__':
 
@@ -343,31 +378,6 @@ if __name__ == '__main__':
             Etapa_ID_ISS()
             ciclo = ciclo +1
             # imprimir las distintas estructuras
-            print('\nCICLO N: '+str(ciclo))
-            #print Mostrar ER
-            print('\nER')
-            for i in range(len(ER)):
-                for j in range(len(ER[0])):
-                    print('[i'+str(i)+' j'+str(j)+'] : '+str(ER[i][j].toString()))
+            #imprimir()
 
-
-            #print Mostrar ROB
-            print('\nROB')
-            for i in range(len(Rob)):
-                print(Rob[i].toString())
-
-            #print Banco de registros
-            print('\nRegistros')
-            for i in range(len(banco_registros)):
-                print(banco_registros[i].toString())
-
-            print('\nUnidad Funcional')
-            for i in range(len(UF)):
-                print(UF[i].toString())
-
-            print('\nMemoria de datos')
-            for i in range(32):
-                print ('Memoria: '+str(i)+' -> '+str(memoria_datos[i]))
-
-            print('\n-----------------CICLO N: '+str(ciclo)+'-----------------')
 
